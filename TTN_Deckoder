@@ -1,0 +1,17 @@
+function Decoder(bytes, port) { 
+var decoded = {}; 
+// Temperatur (2 Bytes, signed) 
+var temp = (bytes[0] << 8) | bytes[1]; 
+if (temp & 0x8000) temp = -(0xFFFF - temp + 1); // Zweierkomplement 
+decoded.temperature = temp / 100.0; // Temperatur in °C 
+// Luftfeuchtigkeit (2 Bytes, unsigned) 
+var humidity = (bytes[2] << 8) | bytes[3]; 
+decoded.humidity = humidity / 100.0; // Luftfeuchtigkeit in % 
+// Luftdruck (2 Bytes, unsigned) 
+var pressure = (bytes[4] << 8) | bytes[5]; 
+decoded.pressure = pressure / 10.0; // Luftdruck in hPa 
+// Batteriespannung (2 Bytes, unsigned) 
+var batteryVol = (bytes[6] << 8) | bytes[7]; 
+decoded.battery = batteryVol / 1000.0; // Batteriespannung in V 
+return decoded; 
+}
