@@ -20,4 +20,9 @@ Hinweis:
 Für die Implementierung des Deep-Sleep-Modus wurde der Code aus dem Repository ESP32-LMIC-DeepSleep-example von JackGruber als Grundlage verwendet und weiterentwickelt.
 https://github.com/JackGruber/ESP32-LMIC-DeepSleep-example/blob/master/src/main.cpp
 
+Hardware:
 ![image](https://github.com/user-attachments/assets/3c95c783-46a7-4c8b-aa4f-fef518ef0c66)
+
+
+Software Architektur:
+![image](https://github.com/user-attachments/assets/4896970a-4bcb-4320-bfc8-32777b3086ac)
