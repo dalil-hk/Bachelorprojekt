@@ -1,0 +1,49 @@
+// Aktuelle Nachricht dekodieren 
+let payload = msg.payload.uplink_message.decoded_payload; 
+// Batteriestand berechnen 
+let bat = ((payload.battery / 0.5778) - 3) / 1.2 * 100; 
+bat = parseFloat(bat.toFixed(2)); 
+// Zeitstempel der aktuellen Nachricht 
+let currentTimestamp = msg.payload.uplink_message.received_at  
+? new Date(msg.payload.uplink_message.received_at).getTime() / 1000  // In Sekunden 
+: Math.floor(Date.now() / 1000);  // Falls kein Zeitstempel vorhanden ist, aktuellen Zeitstempel nehmen 
+// Letzten gespeicherten Zeitstempel aus InfluxDB (kommt aus "join" Node) 
+let lastTimestamp = msg.last_influx_timestamp || flow.get("last_received_timestamp") || currentTimestamp; 
+let lostPayloads = flow.get("lost_payloads") || 0; 
+// Erwartetes Sendeintervall in Sekunden (z.B. alle 60s eine Nachricht) 
+const expectedInterval = 60;  
+// Berechnung der Anzahl der verlorenen Nachrichten 
+let timeDiff = currentTimestamp - lastTimestamp; 
+if (timeDiff > (expectedInterval + 30)) { 
+let missedMessages = Math.floor(timeDiff / expectedInterval) - 1; // -1, weil eine Nachricht gerade empfangen 
+wurde 
+lostPayloads += missedMessages; 
+} 
+// **Wachzeit berechnen** (nur wenn keine Nachrichten verloren gegangen sind) 
+let wake_time = Math.round(timeDiff - expectedInterval); 
+if (wake_time < 0) wake_time = 0; // Falls negative Werte entstehen 
+if (wake_time > 50) wake_time = null; // Falls die Wachzeit > 40s ist, ignorieren 
+// Überprüfung, ob es Mitternacht ist (zurücksetzen auf 0) 
+let currentHour = new Date(currentTimestamp * 1000).getHours(); 
+if (currentHour === 0) { 
+lostPayloads = 0; 
+} 
+// Speichern der aktuellen Werte im Flow-Speicher 
+flow.set("last_received_timestamp", currentTimestamp); 
+flow.set("lost_payloads", lostPayloads); 
+// Daten für InfluxDB formatieren (nur fields) 
+msg.payload = { 
+temperature: payload.temperature, 
+humidity: payload.humidity, 
+pressure: payload.pressure, 
+battery: bat, 
+signalstaerke: msg.payload.uplink_message.rx_metadata[0].rssi, 
+ 
+verlorene_payloads: lostPayloads 
+}; 
+// Falls `wake_time` gültig ist, hinzufügen 
+if (wake_time !== null) { 
+msg.payload.wachzeit = wake_time; 
+} 
+// Rückgabe der Nachricht 
+return msg;
