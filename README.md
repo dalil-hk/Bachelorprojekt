@@ -24,5 +24,5 @@ Hardware:
 ![image](https://github.com/user-attachments/assets/3c95c783-46a7-4c8b-aa4f-fef518ef0c66)
 
 
-Software Architektur:
+Software Architektur der Raspberrypi-Server:
 ![image](https://github.com/user-attachments/assets/4896970a-4bcb-4320-bfc8-32777b3086ac)
