@@ -1,5 +1,6 @@
 # Bachelorprojekt
 Bachelorthema ist Entwicklung einer autarken Wetterstation mit LoRaWAN, MQTT und Datenvisualisierung.
+
 Abstract:
 Diese Bachelorarbeit beschäftigt sich mit der Entwicklung einer autarken Wetterstation, die me
 teorologische Daten wie Temperatur, Luftfeuchtigkeit und Luftdruck erfasst und über große Ent
